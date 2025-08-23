@@ -1,39 +1,31 @@
-/**
- * Archivo dedicado para mostrar los productos del carrito en cart.html
- * Muestra productos guardados en localStorage con funcionalidad completa
- */
 
-// Función principal para mostrar productos en cart.html
-function mostrarProductosCarrito() {
+function productCarrito() {
     console.log("=== INICIANDO mostrarProductosCarrito ===");
     
-    // Obtener carrito desde localStorage
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
     let cartTableBody = document.querySelector(".cart-table tbody");
     
     console.log("Productos en carrito:", carrito.length);
     console.log("Tabla encontrada:", !!cartTableBody);
     
-    // Verificar si estamos en cart.html
+
     if (!cartTableBody) {
         console.log("No se encontró la tabla del carrito - no estamos en cart.html");
         return;
     }
     
-    // Limpiar tabla existente
     cartTableBody.innerHTML = "";
     
-    // Si el carrito está vacío
+
     if (carrito.length === 0) {
-        mostrarCarritoVacio(cartTableBody);
-        actualizarResumenCarrito(0);
+        carritoVacio(cartTableBody);
+        updateResumeCart(0);
         return;
     }
     
-    // Variables para cálculos
     let subtotalGeneral = 0;
     
-    // Mostrar cada producto en la tabla
+
     carrito.forEach((producto, index) => {
         let cantidad = producto.cantidad || 1;
         let precioUnitario = parseFloat(producto.precio) || 0;
@@ -42,20 +34,19 @@ function mostrarProductosCarrito() {
         
         console.log(`Producto ${index + 1}: ${producto.nombre} - Cantidad: ${cantidad} - Subtotal: $${subtotalProducto.toFixed(2)}`);
         
-        // Crear fila para el producto
+
         let filaProducto = crearFilaProducto(producto, index, cantidad, precioUnitario, subtotalProducto);
         cartTableBody.appendChild(filaProducto);
     });
     
     console.log(`Subtotal general: $${subtotalGeneral.toFixed(2)}`);
     
-    // Actualizar resumen de la orden
-    actualizarResumenCarrito(subtotalGeneral);
+    updateResumeCart(subtotalGeneral);
     
     console.log("=== FINALIZANDO mostrarProductosCarrito ===");
 }
 
-// Función para crear una fila de producto en la tabla
+
 function crearFilaProducto(producto, index, cantidad, precioUnitario, subtotalProducto) {
     let fila = document.createElement("tr");
     fila.setAttribute("data-index", index);
@@ -95,8 +86,7 @@ function crearFilaProducto(producto, index, cantidad, precioUnitario, subtotalPr
     return fila;
 }
 
-// Función para mostrar mensaje cuando el carrito está vacío
-function mostrarCarritoVacio(cartTableBody) {
+function carritoVacio(cartTableBody) {
     cartTableBody.innerHTML = `
         <tr>
             <td colspan="4" class="text-center py-5">
@@ -113,8 +103,8 @@ function mostrarCarritoVacio(cartTableBody) {
     `;
 }
 
-// Función para actualizar el resumen de la orden
-function actualizarResumenCarrito(subtotal) {
+
+function updateResumeCart(subtotal) {
     console.log("=== ACTUALIZANDO RESUMEN DE CARRITO ===");
     
     let valorDomicilio = 5.00;
@@ -126,14 +116,13 @@ function actualizarResumenCarrito(subtotal) {
     console.log(`Descuento: -$${descuentoPromo.toFixed(2)}`);
     console.log(`Total: $${total.toFixed(2)}`);
     
-    // Actualizar subtotal en el resumen
+
     let subtotalElement = document.querySelector('.cart-summary .d-flex:nth-child(1) .lead:last-child');
     if (subtotalElement) {
         subtotalElement.textContent = `$${subtotal.toFixed(2)}`;
         console.log("✅ Subtotal actualizado");
     }
-    
-    // Actualizar total en el resumen
+
     let totalElement = document.querySelector('.cart-summary h5.color-primary:last-child');
     if (totalElement) {
         totalElement.textContent = `$${total.toFixed(2)}`;
@@ -143,8 +132,7 @@ function actualizarResumenCarrito(subtotal) {
     console.log("=== RESUMEN ACTUALIZADO ===");
 }
 
-// Función para incrementar cantidad de un producto
-function incrementarCantidadProducto(index) {
+function increaseProductQuantity(index) {
     console.log(`Incrementando cantidad del producto en index: ${index}`);
     
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
@@ -155,14 +143,13 @@ function incrementarCantidadProducto(index) {
         
         console.log(`Nueva cantidad: ${carrito[index].cantidad}`);
         
-        // Recargar la vista del carrito
-        mostrarProductosCarrito();
+   
+        productCarrito();
         actualizarContadorCarrito();
     }
 }
 
-// Función para decrementar cantidad de un producto
-function decrementarCantidadProducto(index) {
+function dicreaseProductQuantity(index) {
     console.log(`Decrementando cantidad del producto en index: ${index}`);
     
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
@@ -173,13 +160,11 @@ function decrementarCantidadProducto(index) {
         
         console.log(`Nueva cantidad: ${carrito[index].cantidad}`);
         
-        // Recargar la vista del carrito
-        mostrarProductosCarrito();
+        productCarrito();
         actualizarContadorCarrito();
     }
 }
 
-// Función para eliminar un producto del carrito
 function eliminarProductoDelCarrito(index) {
     console.log(`Eliminando producto en index: ${index}`);
     
@@ -192,7 +177,7 @@ function eliminarProductoDelCarrito(index) {
             localStorage.setItem("carrito", JSON.stringify(carrito));
             
             // Recargar la vista del carrito
-            mostrarProductosCarrito();
+            productCarrito();
             actualizarContadorCarrito();
             
             console.log("✅ Producto eliminado exitosamente");
@@ -200,7 +185,6 @@ function eliminarProductoDelCarrito(index) {
     }
 }
 
-// Función para actualizar el contador del carrito en la navegación
 function actualizarContadorCarrito() {
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
     let iconCount = document.querySelector(".contar-pro");
@@ -212,28 +196,25 @@ function actualizarContadorCarrito() {
     }
 }
 
-// Función que se ejecuta cuando se carga la página cart.html
 function inicializarCarrito() {
     console.log("=== INICIALIZANDO CARRITO ===");
     
-    // Verificar si estamos en cart.html
     if (document.querySelector(".cart-table")) {
         console.log("Detectada página cart.html - mostrando productos");
-        mostrarProductosCarrito();
+        productCarrito();
         actualizarContadorCarrito();
     } else {
         console.log("No estamos en cart.html");
     }
 }
 
-// Event listener para cuando se carga el DOM
 document.addEventListener("DOMContentLoaded", inicializarCarrito);
 
-// Función para procesar el pedido (conectar con el backend)
+
 function procesarPedido() {
     console.log("=== PROCESANDO PEDIDO ===");
     
-    // Obtener datos del formulario
+
     let nombre = document.getElementById('nombre').value.trim();
     let apellido = document.getElementById('apellido').value.trim();
     let email = document.getElementById('email').value.trim();
@@ -242,16 +223,15 @@ function procesarPedido() {
     let direccion2 = document.getElementById('direccion2').value.trim();
     let notas = document.getElementById('notas').value.trim();
     
-    // Obtener método de pago seleccionado
+
     let metodoPago = document.querySelector('input[name="metodo_pago"]:checked').value;
     
-    // Validar campos obligatorios
+
     if (!nombre || !apellido || !email || !celular || !direccion) {
         alert('Por favor completa todos los campos obligatorios (Nombres, Apellidos, Email, Celular, Dirección)');
         return;
     }
     
-    // Obtener carrito
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
     
     if (carrito.length === 0) {
@@ -264,12 +244,11 @@ function procesarPedido() {
         productos: carrito.length
     });
     
-    // Aquí puedes agregar la lógica para enviar el pedido al backend
+
     alert('¡Pedido procesado exitosamente! Serás redirigido a la página de confirmación.');
-    
-    // Limpiar carrito después del pedido
+
     localStorage.removeItem("carrito");
     
-    // Redirigir a página de agradecimiento
+
     window.location.href = "thankyou.html";
 }

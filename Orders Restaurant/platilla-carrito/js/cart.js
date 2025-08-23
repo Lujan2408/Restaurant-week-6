@@ -1,6 +1,6 @@
-// Variables globales
-let iconCart = document.querySelector(".carrito");
-let iconCount = document.querySelector(".contar-pro");
+
+let iconoCarrito = document.querySelector(".carrito");
+let iconoContar = document.querySelector(".contar-pro");
 let btnProducts = document.querySelectorAll(".btn-product");
 let contentProducts = document.querySelector(".content-pro");
 let tablePro = document.querySelector(".list-cart tbody");
@@ -8,65 +8,62 @@ let carritoContainer = document.querySelector(".list-cart"); // Contenedor del c
 let btnCart= document.querySelector(".btn-cart");
 let con = 1;
 
-// Evento inicial
 document.addEventListener("DOMContentLoaded", () => {
     getProductData();
     renderCarrito();
-    renderCartPage(); // Cargar productos en cart.html si estamos en esa página
+    renderCartPage(); 
 });
 
-// Mostrar/Ocultar carrito
-iconCart.addEventListener("click", () => {
-    carritoContainer.classList.toggle("oculto"); // "oculto" es una clase CSS que pondremos para esconder
+iconoCarrito.addEventListener("click", () => {
+    carritoContainer.classList.toggle("oculto");
 });
 
-// Función para obtener info de producto y agregar al carrito
-let getInfoProduc = (id) => {
+
+let obternerInfoProducto = (id) => {
     let products = JSON.parse(localStorage.getItem("productos")) || [];
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
     let producto = products[id];
-    console.log("Agregando producto:", producto); // Debug
+    console.log("Agregando producto:", producto); 
     
     if (producto) {
-        // Verificar si el producto ya existe en el carrito
         let existeProducto = carrito.find(item => item.id === producto.id);
         
         if (existeProducto) {
-            // Si ya existe, incrementar la cantidad
+            
             existeProducto.cantidad = (existeProducto.cantidad || 1) + 1;
-            console.log("Producto ya existe, nueva cantidad:", existeProducto.cantidad); // Debug
+            console.log("Producto ya existe, nueva cantidad:", existeProducto.cantidad); 
         } else {
-            // Si no existe, agregarlo con cantidad 1
+            
             producto.cantidad = 1;
             carrito.push(producto);
-            console.log("Nuevo producto agregado:", producto); // Debug
+            console.log("Nuevo producto agregado:", producto); 
         }
         
         localStorage.setItem("carrito", JSON.stringify(carrito));
-        console.log("Carrito actualizado:", carrito); // Debug
+        console.log("Carrito actualizado:", carrito); 
         renderCarrito();
     }
 };
 
-// Ir a cart.html al hacer click en "Ver carrito"
+
 btnCart.addEventListener("click", () => {
     console.log("=== CLICK EN VER CARRITO ===");
     
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
     console.log("Carrito al hacer click:", carrito);
 
-    // Siempre redirigir a cart.html, incluso si está vacío
+    
     console.log(`Redirigiendo a cart.html con ${carrito.length} productos`);
     window.location.href = "cart.html";
 });
 
-// Renderizar el carrito en la tabla
+
 let renderCarrito = () => {
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
     
     if (tablePro) {
-        tablePro.innerHTML = ""; // Limpiar antes de renderizar
+        tablePro.innerHTML = ""; 
 
         carrito.forEach((prod, index) => {
             let cantidad = prod.cantidad || 1;
@@ -87,14 +84,14 @@ let renderCarrito = () => {
         });
     }
 
-    // Actualizar contador - contar cantidad total de productos
-    if (iconCount) {
+    
+    if (iconoContar) {
         let totalCantidad = carrito.reduce((total, producto) => total + (producto.cantidad || 1), 0);
-        iconCount.textContent = totalCantidad;
+        iconoContar.textContent = totalCantidad;
     }
 };
 
-// Eliminar producto del carrito
+
 let eliminarProducto = (index) => {
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
     carrito.splice(index, 1);
@@ -102,7 +99,6 @@ let eliminarProducto = (index) => {
     renderCarrito();
 };
 
-// Función para traer datos desde la BD
 let getProductData = async () => {
     let url = "http://localhost/backend-apiCrud/productos";
     try {
@@ -145,7 +141,7 @@ let getProductData = async () => {
     }
 };
 
-// Función para mostrar productos del carrito en cart.html
+
 let renderCartPage = () => {
     console.log("=== INICIANDO renderCartPage ===");
     
@@ -155,16 +151,13 @@ let renderCartPage = () => {
     console.log("Carrito encontrado:", carrito);
     console.log("Tabla encontrada:", cartTableBody);
     
-    // Si no estamos en cart.html, salir
     if (!cartTableBody) {
         console.log("No se encontró tabla de carrito - no estamos en cart.html");
         return;
     }
     
-    // Limpiar tabla
     cartTableBody.innerHTML = "";
     
-    // Si no hay productos en el carrito
     if (carrito.length === 0) {
         console.log("Carrito vacío - mostrando mensaje");
         cartTableBody.innerHTML = `
@@ -184,7 +177,7 @@ let renderCartPage = () => {
     
     let subtotal = 0;
     
-    // Mostrar cada producto
+
     carrito.forEach((producto, index) => {
         let cantidad = producto.cantidad || 1;
         let precioUnitario = parseFloat(producto.precio);
@@ -237,7 +230,7 @@ let renderCartPage = () => {
     updateCartSummary(subtotal);
 };
 
-// Función para actualizar el resumen del carrito
+
 let updateCartSummary = (subtotal) => {
     console.log("=== ACTUALIZANDO RESUMEN ===");
     
@@ -250,7 +243,7 @@ let updateCartSummary = (subtotal) => {
     console.log("Descuento:", descuentoPromo);
     console.log("Total calculado:", total);
     
-    // Buscar el contenedor del resumen
+
     let cartSummary = document.querySelector('.cart-summary');
     
     if (!cartSummary) {
@@ -261,20 +254,19 @@ let updateCartSummary = (subtotal) => {
     console.log("Resumen de carrito encontrado:", cartSummary);
     
     try {
-        // Método más directo - buscar por posición en la estructura
         let summaryItems = cartSummary.querySelectorAll('.d-flex .lead');
         let totalItems = cartSummary.querySelectorAll('.color-primary');
         
         console.log("Items de resumen encontrados:", summaryItems.length);
         console.log("Items de total encontrados:", totalItems.length);
         
-        // Actualizar subtotal (normalmente el segundo elemento)
+    
         if (summaryItems.length >= 2) {
             summaryItems[1].textContent = `$${subtotal.toFixed(2)}`;
             console.log("✅ Subtotal actualizado a:", subtotal.toFixed(2));
         }
         
-        // Actualizar total (último elemento)
+   
         if (totalItems.length >= 2) {
             totalItems[totalItems.length - 1].textContent = `$${total.toFixed(2)}`;
             console.log("✅ Total actualizado a:", total.toFixed(2));
@@ -287,7 +279,6 @@ let updateCartSummary = (subtotal) => {
     console.log("=== RESUMEN ACTUALIZADO ===");
 };
 
-// Función para incrementar cantidad
 let incrementarCantidad = (index) => {
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
     if (carrito[index]) {
@@ -298,7 +289,7 @@ let incrementarCantidad = (index) => {
     }
 };
 
-// Función para decrementar cantidad
+
 let decrementarCantidad = (index) => {
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
     if (carrito[index] && (carrito[index].cantidad || 1) > 1) {
@@ -309,25 +300,25 @@ let decrementarCantidad = (index) => {
     }
 };
 
-// Función para eliminar producto del carrito desde cart.html
-let eliminarProductoCart = (index) => {
-    console.log("Intentando eliminar producto en index:", index); // Debug
+
+let eliminarProductoCarrito = (index) => {
+    console.log("Intentando eliminar producto en index:", index); 
     
     if (confirm('¿Estás seguro de que quieres eliminar este producto del carrito?')) {
         let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-        console.log("Carrito antes de eliminar:", carrito); // Debug
+        console.log("Carrito antes de eliminar:", carrito); 
         
         if (carrito[index]) {
-            console.log("Eliminando producto:", carrito[index]); // Debug
+            console.log("Eliminando producto:", carrito[index]); 
             carrito.splice(index, 1);
             localStorage.setItem("carrito", JSON.stringify(carrito));
             
-            console.log("Carrito después de eliminar:", carrito); // Debug
+            console.log("Carrito después de eliminar:", carrito); 
             
             renderCartPage();
             renderCarrito();
         } else {
-            console.error("Producto no encontrado en index:", index); // Debug
+            console.error("Producto no encontrado en index:", index); 
         }
     }
 };
